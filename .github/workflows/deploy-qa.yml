@@ -84,7 +84,7 @@ jobs:
 
   deploy:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: build-and-push
 
@@ -92,29 +92,13 @@ jobs:
 
       - name: Deploy to QA server
 
-        uses: appleboy/ssh-action@v1.0.3
+        run: |
 
-        with:
+          cd ~/CSC424-Final
 
-          host: ${{ secrets.QA_HOST }}
+          git pull origin main
 
-          username: ${{ secrets.QA_USER }}
+          docker-compose down
 
-          key: ${{ secrets.QA_SSH_KEY }}
-
-          script: |
-
-            if [ ! -d ~/CSC424-Final ]; then
-
-              git clone https://github.com/Hualin120/CSC424-Final.git ~/CSC424-Final
-
-            fi
-
-            cd ~/CSC424-Final
-
-            git pull origin main
-
-            docker compose down
-
-            docker compose up -d
+          docker-compose up -d
 
